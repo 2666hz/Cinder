@@ -24,19 +24,7 @@ class ImageFileBasicApp : public App {
 void ImageFileBasicApp::setup()
 {
 	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
-
-	auto gfs = [&]() -> bool
-	{
-		return isFullScreen();
-	};
-
-	auto sfs = [&](bool value) -> void
-	{
-		setFullScreen(value);
-	};
-
-	m_params->addParam<bool>("Full Screen", sfs, gfs).key("g");
-//	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("g");
+	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("g");	// Fails
 
 	try {
 		fs::path path = getOpenFilePath( "", ImageIo::getLoadExtensions() );
@@ -65,7 +53,7 @@ void ImageFileBasicApp::keyDown( KeyEvent event )
 	}
 	else if (event.getChar() == 'f')
 	{
-		setFullScreen(!isFullScreen());
+		setFullScreen(!isFullScreen());	// Works
 	}
 }
 
