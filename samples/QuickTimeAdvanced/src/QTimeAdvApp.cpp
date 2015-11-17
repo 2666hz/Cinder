@@ -5,6 +5,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Rand.h"
 #include "cinder/qtime/QuickTimeGl.h"
+#include "cinder/Utilities.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -12,7 +13,7 @@ using namespace std;
 
 class QTimeAdvApp : public App {
   public:
-	void prepareSettings( Settings *settings );
+	static void prepareSettings( Settings *settings );
 	void setup();
 
 	void keyDown( KeyEvent event );
@@ -36,7 +37,7 @@ class QTimeAdvApp : public App {
 
 void QTimeAdvApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 640, 480 );
+	settings->setWindowSize( 800, 800 );
 	settings->setFullScreen( false );
 	settings->setResizable( true );
 }
@@ -164,12 +165,18 @@ void QTimeAdvApp::draw()
 			float drawHeight = ( getWindowWidth() * relativeWidth ) / mMovies[m]->getAspectRatio();
 			float x = drawOffsetX;
 			float y = ( getWindowHeight() - drawHeight ) / 2.0f;			
-
+			Rectf r(x, y, x + drawWidth, y + drawHeight);
 			gl::color( Color::white() );
-			gl::draw( texture, Rectf( x, y, x + drawWidth, y + drawHeight ) );
+			gl::draw( texture, r );
+
+			gl::enableAlphaBlending();
+			gl::drawStringRight(toString<Rectf>(r), vec2(getWindowWidth(), 40.0f), Color(1, 1, 1), Font("Helvetica", 30));
+			gl::disableAlphaBlending();
+
 		}
 		drawOffsetX += getWindowWidth() * relativeWidth;
 	}
 }
 
-CINDER_APP( QTimeAdvApp, RendererGl )
+//CINDER_APP( QTimeAdvApp, RendererGl )
+CINDER_APP( QTimeAdvApp, RendererGl, QTimeAdvApp::prepareSettings)

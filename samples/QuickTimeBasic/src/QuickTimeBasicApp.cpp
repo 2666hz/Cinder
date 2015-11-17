@@ -4,6 +4,7 @@
 #include "cinder/Surface.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/qtime/QuickTimeGl.h"
+#include "cinder/params/Params.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,12 +22,17 @@ class QuickTimeSampleApp : public App {
 
 	void loadMovieFile( const fs::path &path );
 
+	ci::params::InterfaceGlRef	m_params;
+
 	gl::TextureRef			mFrameTexture;
 	qtime::MovieGlRef		mMovie;
 };
 
 void QuickTimeSampleApp::setup()
 {
+	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
+	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("f");
+
 	fs::path moviePath = getOpenFilePath();
 	if( ! moviePath.empty() )
 		loadMovieFile( moviePath );
@@ -34,10 +40,15 @@ void QuickTimeSampleApp::setup()
 
 void QuickTimeSampleApp::keyDown( KeyEvent event )
 {
-	if( event.getChar() == 'o' ) {
+	if( event.getChar() == 'o' ) 
+	{
 		fs::path moviePath = getOpenFilePath();
 		if( ! moviePath.empty() )
 			loadMovieFile( moviePath );
+	}
+	else if (event.getChar() == 'g')
+	{
+		setFullScreen(!isFullScreen());
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "cinder/Log.h"
 #include "cinder/ImageIo.h"
 #include "cinder/gl/Texture.h"
+#include "cinder/params/Params.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -17,10 +18,26 @@ class ImageFileBasicApp : public App {
 	void draw() override;
 	
 	gl::TextureRef		mTexture;
+	ci::params::InterfaceGlRef	m_params;
 };
 
 void ImageFileBasicApp::setup()
 {
+	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
+
+	auto gfs = [&]() -> bool
+	{
+		return isFullScreen();
+	};
+
+	auto sfs = [&](bool value) -> void
+	{
+		setFullScreen(value);
+	};
+
+	m_params->addParam<bool>("Full Screen", sfs, gfs).key("g");
+//	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("g");
+
 	try {
 		fs::path path = getOpenFilePath( "", ImageIo::getLoadExtensions() );
 		if( ! path.empty() ) {
@@ -46,6 +63,10 @@ void ImageFileBasicApp::keyDown( KeyEvent event )
 			writeImage( writeFile( path ), s8 );
 		}
 	}
+	else if (event.getChar() == 'f')
+	{
+		setFullScreen(!isFullScreen());
+	}
 }
 
 void ImageFileBasicApp::fileDrop( FileDropEvent event )
@@ -65,8 +86,9 @@ void ImageFileBasicApp::draw()
 	
 	if( mTexture ) {
 		Rectf destRect = Rectf( mTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ).scaledCentered( 0.85f );
-		gl::draw( mTexture, destRect );
+		gl::draw(mTexture, getWindowBounds());
 	}
+	m_params->draw();
 }
 
 CINDER_APP( ImageFileBasicApp, RendererGl )
