@@ -48,7 +48,7 @@ typedef enum {
 } Level;
 
 struct Location {
-	Location() {}
+	Location() : mLineNumber(0) {}
 
 	Location( const std::string &functionName, const std::string &fileName, const size_t &lineNumber )
 		: mFunctionName( functionName ), mFileName( fileName ), mLineNumber( lineNumber )
@@ -57,7 +57,7 @@ struct Location {
 	const std::string&	getFileName() const				{ return mFileName; }
 	const std::string&	getFunctionName() const			{ return mFunctionName; }
 	size_t				getLineNumber() const			{ return mLineNumber; }
-
+	bool				isValid() const					{ return !mFileName.empty(); };
 private:
 	std::string mFunctionName, mFileName;
 	size_t		mLineNumber;
@@ -85,14 +85,22 @@ class Logger : private Noncopyable {
 
 	void setTimestampEnabled( bool enable = true )	{ mTimeStampEnabled = enable; }
 	bool isTimestampEnabled() const					{ return mTimeStampEnabled; }
-	
-  protected:
-	Logger() : mTimeStampEnabled( false ) {}
+
+	void setFileLocationEnabled(bool enable = true)	{ mFileLocationEnabled = enable; }
+	bool isFileLocationEnabled() const				{ return mFileLocationEnabled; }
+
+	void setPrintLevelEnabled(bool enable = true)	{ mPrintLevelEnabled = enable; }
+	bool isPrintLevelEnabled() const				{ return mPrintLevelEnabled; }
+
+protected:
+	Logger() : mTimeStampEnabled(false), mFileLocationEnabled(true), mPrintLevelEnabled(true) {};
 
 	void writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text );
 
   private:
 	bool mTimeStampEnabled;
+	bool mFileLocationEnabled;
+	bool mPrintLevelEnabled;
 };
 	
 typedef std::shared_ptr<Logger>	LoggerRef;
@@ -212,7 +220,13 @@ public:
 	std::vector<LoggerRef> getAllLoggers();
 	//! Returns the mutex used for thread safe logging.
 	std::mutex& getMutex() const			{ return mMutex; }
-	
+	//! Enable or disable printing of timestamp on all loggers
+	void setTimestampEnabled(bool enable = true);
+	//! Enable or disable pringing of linenumber, function and filename on all loggers
+	void setFileLocationEnabled(bool enable = true);
+	//! Enable or disable printing of debug level all loggers
+	void setPrintLevelEnabled(bool enable = true);
+
 	void write( const Metadata &meta, const std::string &text );
 	
 	template<typename LoggerT, typename... Args>
@@ -230,8 +244,16 @@ protected:
 	
 struct Entry {
 	// TODO: move &&location
-	Entry( Level level, const Location &location );
+	Entry(Level level = LEVEL_VERBOSE, bool endLine = true);
+	Entry(Level level, const Location &location, bool endLine = true);
 	~Entry();
+
+	Entry& operator<<(const std::stringstream &rhs)
+	{
+		mHasContent = true;
+		mStream << rhs.rdbuf();
+		return *this;
+	};
 
 	template <typename T>
 	Entry& operator<<( const T &rhs )
@@ -239,7 +261,7 @@ struct Entry {
 		mHasContent = true;
 		mStream << rhs;
 		return *this;
-	}
+	};
 
 	void writeToLog();
 	const Metadata&	getMetaData() const	{ return mMetaData; }
@@ -248,6 +270,7 @@ private:
 
 	Metadata			mMetaData;
 	bool				mHasContent;
+	bool				mEndLine;
 	std::stringstream	mStream;
 };
 
@@ -308,6 +331,12 @@ std::vector<std::shared_ptr<LoggerT>> LogManager::getLoggers()
 	#else
 		#define CI_MIN_LOG_LEVEL 2	// release mode default is LEVEL_INFO
 	#endif
+#endif
+
+#if( CI_MIN_LOG_LEVEL <= 0 )
+	#define CI_LOG( stream )	(::cinder::log::Entry() << stream)
+#else
+	#define CI_LOG( stream )	((void)0)
 #endif
 
 #if( CI_MIN_LOG_LEVEL <= 0 )
