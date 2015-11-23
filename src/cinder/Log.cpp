@@ -202,7 +202,7 @@ void Entry::writeToLog()
 void Logger::writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text )
 {
 	if (isPrintLevelEnabled())
-		stream << meta.mLevel << " ";
+		stream << meta.mLevel;
 
 	if( isTimestampEnabled() )
 		stream << getCurrentDateTimeString() << " ";
