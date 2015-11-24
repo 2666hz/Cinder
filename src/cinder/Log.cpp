@@ -132,7 +132,25 @@ std::vector<LoggerRef> LogManager::getAllLoggers()
 	lock_guard<mutex> lock( mMutex );
 	return mLoggers;
 }
-	
+
+void LogManager::setTimestampEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setTimestampEnabled(enable);
+}
+
+void LogManager::setFileLocationEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setFileLocationEnabled(enable);
+}
+
+void LogManager::setPrintLevelEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setPrintLevelEnabled(enable);
+}
+
 void LogManager::restoreToDefault()
 {
 	clearLoggers();
@@ -153,8 +171,14 @@ void LogManager::write( const Metadata &meta, const std::string &text )
 // MARK: - Entry
 // ----------------------------------------------------------------------------------------------------
 
-Entry::Entry( Level level, const Location &location )
-: mHasContent( false )
+Entry::Entry(Level level, bool endLine)
+: mHasContent(false), mEndLine(endLine)
+{
+	mMetaData.mLevel = level;
+}
+
+Entry::Entry( Level level, const Location &location, bool endLine )
+: mHasContent(false), mEndLine(endLine)
 {
 	mMetaData.mLevel = level;
 	mMetaData.mLocation = location;
@@ -177,12 +201,16 @@ void Entry::writeToLog()
 
 void Logger::writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text )
 {
-	stream << meta.mLevel << " ";
+	if (isPrintLevelEnabled())
+		stream << meta.mLevel;
 
 	if( isTimestampEnabled() )
 		stream << getCurrentDateTimeString() << " ";
 
-	stream << meta.mLocation << " " << text << endl;
+	if (isFileLocationEnabled() && meta.mLocation.isValid())
+		stream << meta.mLocation << " ";
+
+	stream << text << endl;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -464,12 +492,18 @@ ostream& operator<<( ostream &os, const Location &rhs )
 ostream& operator<<( ostream &lhs, const Level &rhs )
 {
 	switch( rhs ) {
-		case LEVEL_VERBOSE:		lhs << "|verbose|";	break;
-		case LEVEL_DEBUG:		lhs << "|debug  |";	break;
-		case LEVEL_INFO:		lhs << "|info   |";	break;
-		case LEVEL_WARNING:		lhs << "|warning|";	break;
-		case LEVEL_ERROR:		lhs << "|error  |";	break;
-		case LEVEL_FATAL:		lhs << "|fatal  |";	break;
+		case LEVEL_VERBOSE:		break;
+		case LEVEL_DEBUG:		break;
+		case LEVEL_INFO:		break;
+		case LEVEL_WARNING:		lhs << "Warning - ";	break;
+		case LEVEL_ERROR:		lhs << "Error - ";	break;
+		case LEVEL_FATAL:		lhs << "FATALERROR - ";	break;
+		//case LEVEL_VERBOSE:		lhs << "|verbose|";	break;
+		//case LEVEL_DEBUG:		lhs << "|debug  |";	break;
+		//case LEVEL_INFO:		lhs << "|info   |";	break;
+		//case LEVEL_WARNING:		lhs << "|warning|";	break;
+		//case LEVEL_ERROR:		lhs << "|error  |";	break;
+		//case LEVEL_FATAL:		lhs << "|fatal  |";	break;
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 	return lhs;

@@ -44,10 +44,9 @@ void QTimeAdvApp::prepareSettings( Settings *settings )
 
 void QTimeAdvApp::setup()
 {
-	srand( 133 );
-	fs::path moviePath = getOpenFilePath();
-	if( ! moviePath.empty() )
-		loadMovieFile( moviePath );
+//	fs::path moviePath = getOpenFilePath();
+//	if( ! moviePath.empty() )
+//		loadMovieFile( moviePath );
 }
 
 void QTimeAdvApp::keyDown( KeyEvent event )
@@ -77,11 +76,12 @@ void QTimeAdvApp::keyDown( KeyEvent event )
 			mMovies.erase( mMovies.begin() + ( rand() % mMovies.size() ) );
 	}
 	else if( event.getChar() == 'u' ) {
-		vector<string> randomMovie;
-		randomMovie.push_back( "http://movies.apple.com/movies/us/hd_gallery/gl1800/480p/bbc_earth_m480p.mov" );
-		randomMovie.push_back( "http://movies.apple.com/media/us/quicktime/guide/hd/480p/noisettes_m480p.mov" );
-		randomMovie.push_back( "http://pdl.warnerbros.com/wbol/us/dd/med/northbynorthwest/quicktime_page/nbnf_airplane_explosion_qt_500.mov" );
-		loadMovieUrl( randomMovie[rand() % randomMovie.size()] );
+//		vector<string> randomMovie;
+//		randomMovie.push_back( "http://movies.apple.com/movies/us/hd_gallery/gl1800/480p/bbc_earth_m480p.mov" );
+//		randomMovie.push_back( "http://movies.apple.com/media/us/quicktime/guide/hd/480p/noisettes_m480p.mov" );
+//		randomMovie.push_back( "http://pdl.warnerbros.com/wbol/us/dd/med/northbynorthwest/quicktime_page/nbnf_airplane_explosion_qt_500.mov" );
+//		loadMovieUrl( randomMovie[rand() % randomMovie.size()] );
+		loadMovieUrl("file://F:/Projects/Tour Reservoir/Video/V0005.mp4");
 	}
 }
 

@@ -19,12 +19,16 @@ class ImageFileBasicApp : public App {
 	
 	gl::TextureRef		mTexture;
 	ci::params::InterfaceGlRef	m_params;
+	bool			m_bFullscreen = false;
 };
 
 void ImageFileBasicApp::setup()
 {
 	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
 	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("g");	// Fails
+
+	m_params->addParam("full screen", &m_bFullscreen).updateFn([this] 
+	{	setFullScreen(m_bFullscreen);	CI_LOG_I("m_bFullscreen: " << m_bFullscreen); }).key("h");
 
 	try {
 		fs::path path = getOpenFilePath( "", ImageIo::getLoadExtensions() );
