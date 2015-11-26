@@ -142,6 +142,29 @@ std::string IStreamCinder::readLine()
 	return result;
 }
 
+size_t IStreamCinder::readLine(std::string& s)
+{
+	int8_t ch;
+	size_t count = 0;
+	while (!isEof()) 
+	{
+		read(&ch);
+		if (ch == 0x0A)				//  LF (Line feed, '\n', 0x0A)
+			break;
+		else if (ch == 0x0D)		//	CR (Carriage return, '\r', 0x0D)
+		{		
+			read(&ch);
+			if (ch != 0x0A)			//	CR followed by LF (CR+LF, '\r\n', 0x0D0A).
+				seekRelative(-1);
+			break;
+		}
+		else
+			s += ch;
+	}
+
+	return count;
+}
+
 void IStreamCinder::readData( void *t, size_t size )
 {
 	IORead( t, size );
