@@ -31,6 +31,7 @@
 #include "cinder/Surface.h"
 #include "cinder/Thread.h"
 #include "cinder/Url.h"
+#include "cinder/MovieInterface.h"
 
 #include <string>
 
@@ -66,7 +67,7 @@ class MovieResponder;
 class MovieLoader;
 typedef std::shared_ptr<MovieLoader> MovieLoaderRef;
 	
-class MovieBase {
+class MovieBase : public MovieInterface {
   public:
 	virtual		~MovieBase();
 	
@@ -74,18 +75,12 @@ class MovieBase {
 	int32_t		getWidth() const { return mWidth; }
 	//! Returns the height of the movie in pixels
 	int32_t		getHeight() const { return mHeight; }
-	//! Returns the size of the movie in pixels
-	ivec2		getSize() const { return ivec2( getWidth(), getHeight() ); }	
-	//! Returns the movie's aspect ratio, the ratio of its width to its height
-	float		getAspectRatio() const { return static_cast<float>(mWidth) / static_cast<float>(mHeight); }
-	//! the Area defining the Movie's bounds in pixels: [0,0]-[width,height]
-	Area		getBounds() const { return Area( 0, 0, getWidth(), getHeight() ); }
-	
 	//! Returns the movie's pixel aspect ratio. Returns 1.0 if the movie does not contain an explicit pixel aspect ratio.
 	float		getPixelAspectRatio() const;
 	
 	//! Returns whether the movie has loaded and buffered enough to playback without interruption
 	bool		checkPlaythroughOk();
+
 	//! Returns whether the movie is in a loaded state, implying its structures are ready for reading but it may not be ready for playback
 	bool		isLoaded() const { return mLoaded; }
 	//! Returns whether the movie is playable, implying the movie is fully formed and can be played but media data is still downloading
@@ -145,8 +140,8 @@ class MovieBase {
 	bool		isPlaying() const;
 	//! Returns whether the movie has completely finished playing
 	bool		isDone() const;
-	//! Begins movie playback.
-	void		play( bool toggle = false );
+	//! Begins movie playback. if bToggle = true and movie is already playing, stops movie playback
+	void		play(bool bToggle = false);
 	//! Stops playback
 	void		stop();
 	

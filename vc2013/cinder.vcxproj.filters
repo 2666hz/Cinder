@@ -1652,5 +1652,34 @@
     <ClInclude Include="..\include\tinyexr\tinyexr.h">
       <Filter>Header Files\tinyexr</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\cinder\MovieInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cinder\qtime\AvfUtils.h">
+      <Filter>Header Files\qtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cinder\qtime\AvfWriter.h">
+      <Filter>Header Files\qtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cinder\qtime\QuickTimeGlImplAvf.h">
+      <Filter>Header Files\qtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cinder\qtime\QuickTimeImplAvf.h">
+      <Filter>Header Files\qtime</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\cinder\qtime\AvfUtils.mm">
+      <Filter>Source Files\qtime</Filter>
+    </None>
+    <None Include="..\src\cinder\qtime\AvfWriter.mm">
+      <Filter>Source Files\qtime</Filter>
+    </None>
+    <None Include="..\src\cinder\qtime\QuickTimeImplAvf.mm">
+      <Filter>Source Files\qtime</Filter>
+    </None>
+    <None Include="..\src\cinder\qtime\QuickTimeGlImplAvf.cpp">
+      <Filter>Source Files\qtime</Filter>
+    </None>
   </ItemGroup>
 </Project>

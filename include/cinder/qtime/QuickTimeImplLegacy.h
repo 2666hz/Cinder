@@ -32,6 +32,7 @@
 #include "cinder/Url.h"
 #include "cinder/DataSource.h"
 #include "cinder/Thread.h"
+#include "cinder/MovieInterface.h"
 
 #include <string>
 
@@ -61,31 +62,26 @@ namespace cinder { namespace qtime {
 class MovieLoader;
 typedef std::shared_ptr<MovieLoader>	MovieLoaderRef;
 
-class MovieBase {
+class MovieBase : public MovieInterface {
   public:
 	virtual		~MovieBase() {}
 	
-	//! Returns whether the movie has loaded and buffered enough to playback without interruption
-	bool		checkPlayable();
-	
 	//! Returns the width of the movie in pixels
-	int32_t		getWidth() const { return getObj()->mWidth; }
+	int			getWidth() const { return getObj()->mWidth; };
 	//! Returns the height of the movie in pixels
-	int32_t		getHeight() const { return getObj()->mHeight; }
-	//! Returns the size of the movie in pixels
-	ivec2		getSize() const { return ivec2( getWidth(), getHeight() ); }
-	//! Returns the movie's aspect ratio, the ratio of its width to its height
-	float		getAspectRatio() const { return getObj()->mWidth / (float)getObj()->mHeight; }
-	//! the Area defining the Movie's bounds in pixels: [0,0]-[width,height]
-	Area		getBounds() const { return Area( 0, 0, getWidth(), getHeight() ); }
+	int			getHeight() const { return getObj()->mHeight; };
 	//! Returns the movie's pixel aspect ratio. Returns 1.0 if the movie does not contain an explicit pixel aspect ratio.
 	float		getPixelAspectRatio() const;
+
+	//! Returns whether the movie has loaded and buffered enough to playback without interruption
+	bool		checkPlaythroughOk();
+
 	//! Returns the movie's length measured in seconds
 	float		getDuration() const { return getObj()->mDuration; }
 	//! Returns the movie's framerate measured as frames per second
 	float		getFramerate() const;
 	//! Returns the total number of frames (video samples) in the movie
-	int32_t		getNumFrames() const;
+	int			getNumFrames() const;
 	//! Returns whether the first video track in the movie contains an alpha channel. Returns false in the absence of visual media.
 	bool		hasAlpha() const;
 	
@@ -119,8 +115,10 @@ class MovieBase {
 	//! Steps backward by one frame (a single video sample). Ignores looping settings.
 	void		stepBackward();
 	//! Sets the playback rate, which begins playback immediately for nonzero values. 1.0 represents normal speed. Negative values indicate reverse playback and \c 0 stops.
-	void		setRate( float rate );
-	
+	bool		setRate( float rate );
+	//! Gets the playback rate, 1.0 represents normal speed. Negative values indicate reverse playback.
+	float		getRate() const;
+
 	//! Sets the audio playback volume ranging from [0 - 1.0]
 	void		setVolume( float volume );
 	//! Gets the audio playback volume ranging from [0 - 1.0]
@@ -138,14 +136,19 @@ class MovieBase {
 	uint32_t	getNumFftChannels() const;
 	
 	//! Returns whether the movie is currently playing or is paused/stopped.
-	bool	isPlaying() const;
-	//! Returns whether the movie has completely finished playing
-	bool	isDone() const;
-	//! Begins movie playback.
-	void	play();
-	//! Stops movie playback.
-	void	stop();
-	
+	bool		isPlaying() const;
+	//! Returns whether the movie is paused or not
+	bool		isPaused() const { return !isPlaying(); };
+	//! Returns whether the movie has been stopped or not
+	bool		isStopped() const { return !isPlaying(); };
+	//! Returns whether the movie has completed playing or not
+	bool		isDone() const;
+
+	//! Begins movie playback. if bToggle = true and movie is already playing, stops movie playback (silly I know)
+	void		play(bool bToggle = false);	// Avf version
+	void		pause() { stop(); };
+	void		stop();
+
 	//! Sets a function which is called whenever the movie has rendered a new frame during playback. Generally only necessary for advanced users.
 	void	setNewFrameCallback( void(*aNewFrameCallback)( long, void * ), void *aNewFrameCallbackRefcon );
 	
@@ -221,6 +224,10 @@ class MovieSurface : public MovieBase {
 	//! Returns the Surface8u representing the Movie's current frame
 	SurfaceRef	getSurface();
 	
+	void draw(const Area &srcArea, const Rectf &dstRect);
+	void draw(const Rectf& destRect);
+	void drawCentreFit(const Rectf& windowBounds, bool bExpand = true);
+
   protected:
 	MovieSurface() : MovieBase() {}
 	MovieSurface( const fs::path &path );

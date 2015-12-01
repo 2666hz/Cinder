@@ -47,6 +47,10 @@ class MovieGl : public MovieBase {
 	//! Returns the gl::Texture representing the Movie's current frame, bound to the \c GL_TEXTURE_RECTANGLE_ARB target
 	const gl::TextureRef	getTexture();
 
+	void draw(const Area &srcArea, const Rectf &dstRect);
+	void draw(const Rectf& destRect);
+	void drawCentreFit(const Rectf& windowBounds, bool bExpand = true);
+
   protected:
 	MovieGl() : MovieBase() {}
 	MovieGl( const fs::path &path );

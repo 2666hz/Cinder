@@ -479,7 +479,7 @@ bool MovieBase::isDone() const
 	return ::CMTimeCompare( current_time, end_time ) >= 0;
 }
 
-void MovieBase::play(bool toggle)
+void MovieBase::play(bool bToggle)
 {
 	if( ! mPlayer ) {
 		mPlaying = true;

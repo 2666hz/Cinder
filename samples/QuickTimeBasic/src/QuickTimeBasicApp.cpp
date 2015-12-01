@@ -22,16 +22,18 @@ class QuickTimeSampleApp : public App {
 
 	void loadMovieFile( const fs::path &path );
 
-	ci::params::InterfaceGlRef	m_params;
+//	ci::params::InterfaceGlRef	m_params;
 
-	gl::TextureRef			mFrameTexture;
-	qtime::MovieGlRef		mMovie;
+//	gl::TextureRef			mFrameTexture;
+	MovieRef				mMovie;
+//	qtime::MovieGlRef		mMovie;
+
 };
 
 void QuickTimeSampleApp::setup()
 {
-	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
-	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("f");
+//	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
+//	m_params->addParam<bool>("Full Screen", [&](bool b)->void { setFullScreen(b); }, [&]()->bool { return isFullScreen(); }).key("f");
 
 	fs::path moviePath = getOpenFilePath();
 	if( ! moviePath.empty() )
@@ -40,15 +42,20 @@ void QuickTimeSampleApp::setup()
 
 void QuickTimeSampleApp::keyDown( KeyEvent event )
 {
-	if( event.getChar() == 'o' ) 
+	switch (event.getChar())
 	{
-		fs::path moviePath = getOpenFilePath();
-		if( ! moviePath.empty() )
-			loadMovieFile( moviePath );
-	}
-	else if (event.getChar() == 'g')
-	{
-		setFullScreen(!isFullScreen());
+		case 'o':
+		{
+			fs::path moviePath = getOpenFilePath();
+			if (!moviePath.empty())
+				loadMovieFile(moviePath);
+		}
+		break;
+		case 'f':
+			setFullScreen(!isFullScreen());
+		break;
+		default:
+		break;
 	}
 }
 
@@ -65,7 +72,7 @@ void QuickTimeSampleApp::loadMovieFile( const fs::path &moviePath )
 		mMovie.reset();
 	}
 
-	mFrameTexture.reset();
+//	mFrameTexture.reset();
 }
 
 void QuickTimeSampleApp::fileDrop( FileDropEvent event )
@@ -75,18 +82,20 @@ void QuickTimeSampleApp::fileDrop( FileDropEvent event )
 
 void QuickTimeSampleApp::update()
 {
-	if( mMovie )
-		mFrameTexture = mMovie->getTexture();
+//	if( mMovie )
+//		mFrameTexture = mMovie->getTexture();
 }
 
 void QuickTimeSampleApp::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) );
 
-	if( mFrameTexture ) {
-		Rectf centeredRect = Rectf( mFrameTexture->getBounds() ).getCenteredFit( getWindowBounds(), true );
-		gl::draw( mFrameTexture, centeredRect );
-	}
+	mMovie->drawCentreFit(getWindowBounds());
+
+//	if( mFrameTexture ) {
+//		Rectf centeredRect = Rectf( mFrameTexture->getBounds() ).getCenteredFit( getWindowBounds(), true );
+//		gl::draw( mFrameTexture, centeredRect );
+//	}
 }
 
 CINDER_APP( QuickTimeSampleApp, RendererGl );

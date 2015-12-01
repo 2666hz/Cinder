@@ -22,14 +22,15 @@ class QTimeAdvApp : public App {
 	void update();
 	void draw();
 
-	void addActiveMovie( qtime::MovieGlRef movie );
+	void addActiveMovie(MovieRef movie);
 	void loadMovieUrl( const std::string &urlString );
 	void loadMovieFile( const fs::path &path );
 
 
 	fs::path mLastPath;
 	// all of the actively playing movies
-	vector<qtime::MovieGlRef> mMovies;
+	vector<MovieRef> mMovies;
+//	vector<qtime::MovieGlRef> mMovies;
 	// movies we're still waiting on to be loaded
 	vector<qtime::MovieLoaderRef> mLoadingMovies;
 };
@@ -85,15 +86,15 @@ void QTimeAdvApp::keyDown( KeyEvent event )
 	}
 }
 
-void QTimeAdvApp::addActiveMovie( qtime::MovieGlRef movie )
+void QTimeAdvApp::addActiveMovie(MovieRef movie)
 {
 	console() << "Dimensions:" << movie->getWidth() << " x " << movie->getHeight() << std::endl;
 	console() << "Duration:  " << movie->getDuration() << " seconds" << std::endl;
 	console() << "Frames:    " << movie->getNumFrames() << std::endl;
 	console() << "Framerate: " << movie->getFramerate() << std::endl;
-	movie->setLoop( true, false );
+	movie->setLoop(true, false);
 	
-	mMovies.push_back( movie );
+	mMovies.push_back(movie);
 	movie->play();
 }
 
@@ -157,22 +158,21 @@ void QTimeAdvApp::draw()
 		totalWidth += mMovies[m]->getWidth();
 
 	int drawOffsetX = 0;
-	for( size_t m = 0; m < mMovies.size(); ++m ) {
+	for( size_t m = 0; m < mMovies.size(); ++m ) 
+	{
 		float relativeWidth = mMovies[m]->getWidth() / (float)totalWidth;
-		gl::TextureRef texture = mMovies[m]->getTexture();
-		if( texture ) {
+
+//		gl::TextureRef texture = mMovies[m]->getTexture();
+//		if( texture )
+		{
 			float drawWidth = getWindowWidth() * relativeWidth;
 			float drawHeight = ( getWindowWidth() * relativeWidth ) / mMovies[m]->getAspectRatio();
 			float x = drawOffsetX;
 			float y = ( getWindowHeight() - drawHeight ) / 2.0f;			
 			Rectf r(x, y, x + drawWidth, y + drawHeight);
-			gl::color( Color::white() );
-			gl::draw( texture, r );
-
-			gl::enableAlphaBlending();
-			gl::drawStringRight(toString<Rectf>(r), vec2(getWindowWidth(), 40.0f), Color(1, 1, 1), Font("Helvetica", 30));
-			gl::disableAlphaBlending();
-
+			mMovies[m]->draw(r);
+//			gl::color( Color::white() );
+//			gl::draw( texture, r );
 		}
 		drawOffsetX += getWindowWidth() * relativeWidth;
 	}

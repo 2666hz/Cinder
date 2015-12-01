@@ -30,6 +30,7 @@
 #endif
 
 #include "cinder/gl/Texture.h"
+#include "cinder/gl/draw.h"
 #include "cinder/qtime/QuickTime.h"
 #include "cinder/qtime/QuickTimeUtils.h"
 #include "cinder/Cinder.h"
@@ -241,7 +242,7 @@ void MovieBase::updateLoadState()
 }
 
 //! \return The movie has loaded and buffered enough to playback without interruption
-bool MovieBase::checkPlayable()
+bool MovieBase::checkPlaythroughOk()
 {
 	if( getObj()->mPlayable ) return true;
 	updateLoadState();
@@ -455,9 +456,17 @@ void MovieBase::stepBackward()
 	::MoviesTask( getObj()->mMovie, 0 );
 }
 
-void MovieBase::setRate( float rate )
+bool MovieBase::setRate( float rate )
 {
-	::SetMovieRate( getObj()->mMovie, floatToFixed( rate ) );
+	const Fixed r = floatToFixed(rate);
+	::SetMovieRate(getObj()->mMovie, r);
+
+	return (::GetMovieRate(getObj()->mMovie) == r);
+}
+
+float MovieBase::getRate() const
+{
+	return FixedToFloat(::GetMovieRate(getObj()->mMovie));
 }
 
 bool MovieBase::checkNewFrame()
@@ -637,9 +646,12 @@ bool MovieBase::isDone() const
 	return ::IsMovieDone( getObj()->mMovie ) != 0;
 }
 
-void MovieBase::play()
+void MovieBase::play(bool bToggle)
 {
-	::StartMovie( getObj()->mMovie );
+	if (bToggle && isPlaying())
+		stop();
+	else
+		::StartMovie( getObj()->mMovie );
 }
 
 void MovieBase::stop()
@@ -732,6 +744,35 @@ SurfaceRef MovieSurface::getSurface()
 	return result;
 }
 
+void MovieSurface::draw(const Rectf& dstRect)
+{
+	SurfaceRef surface = getSurface();
+	if (surface)
+	{
+		// We are using OpenGL to draw the frames here, so we'll make a texture out of the surface
+		gl::draw(gl::Texture::create(*surface), dstRect);
+	}
+}
+
+void MovieSurface::draw(const Area &srcArea, const Rectf &dstRect)
+{
+	SurfaceRef surface = getSurface();
+	if (surface)
+	{
+		// We are using OpenGL to draw the frames here, so we'll make a texture out of the surface
+		gl::draw(gl::Texture::create(*surface), srcArea, dstRect);
+	}
+}
+
+void MovieSurface::drawCentreFit(const Rectf& windowBounds, bool bExpand)
+{
+	SurfaceRef surface = getSurface();
+	if (surface)
+	{
+		gl::Texture2dRef t = gl::Texture::create(*surface);
+		gl::draw(t, Rectf(t->getBounds()).getCenteredFit(windowBounds, bExpand));
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MovieLoader

@@ -27,6 +27,7 @@
 
 #include "cinder/qtime/QuickTimeGlImplLegacy.h"
 #include "cinder/qtime/QuickTimeUtils.h"
+#include "cinder/gl/draw.h"
 
 #if defined( CINDER_MSW )
 	#pragma push_macro( "__STDC_CONSTANT_MACROS" )
@@ -182,6 +183,29 @@ const gl::TextureRef MovieGl::getTexture()
 	mObj->unlock();
 
 	return result;
+}
+
+void MovieGl::draw(const Rectf &dstRect)
+{
+	gl::TextureRef t = getTexture();
+
+	if (t)
+		gl::draw(t, dstRect);
+}
+
+void MovieGl::draw(const Area &srcArea, const Rectf &dstRect)
+{
+	gl::TextureRef t = getTexture();
+
+	if (t)
+		gl::draw(t, srcArea, dstRect);
+}
+
+void MovieGl::drawCentreFit(const Rectf& windowBounds, bool bExpand)
+{
+	gl::TextureRef t = getTexture();
+	if (t)
+		gl::draw(t, Rectf(t->getBounds()).getCenteredFit(windowBounds, bExpand));
 }
 
 

@@ -535,6 +535,14 @@
     <ClCompile Include="..\src\cinder\Plane.cpp" />
     <ClCompile Include="..\src\cinder\PolyLine.cpp" />
     <ClCompile Include="..\src\cinder\qtime\MovieWriter.cpp" />
+    <None Include="..\src\cinder\qtime\QuickTimeGlImplAvf.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|x64'">true</ExcludedFromBuild>
+    </None>
     <ClCompile Include="..\src\cinder\qtime\QuickTimeGlImplLegacy.cpp" />
     <ClCompile Include="..\src\cinder\qtime\QuickTimeImplLegacy.cpp" />
     <ClCompile Include="..\src\cinder\qtime\QuickTimeUtils.cpp" />
@@ -761,12 +769,17 @@
     <ClInclude Include="..\include\cinder\Matrix22.h" />
     <ClInclude Include="..\include\cinder\Matrix33.h" />
     <ClInclude Include="..\include\cinder\Matrix44.h" />
+    <ClInclude Include="..\include\cinder\MovieInterface.h" />
     <ClInclude Include="..\include\cinder\Plane.h" />
     <ClInclude Include="..\include\cinder\Function.h" />
+    <ClInclude Include="..\include\cinder\qtime\AvfUtils.h" />
+    <ClInclude Include="..\include\cinder\qtime\AvfWriter.h" />
     <ClInclude Include="..\include\cinder\qtime\MovieWriter.h" />
     <ClInclude Include="..\include\cinder\qtime\QuickTime.h" />
     <ClInclude Include="..\include\cinder\qtime\QuickTimeGl.h" />
+    <ClInclude Include="..\include\cinder\qtime\QuickTimeGlImplAvf.h" />
     <ClInclude Include="..\include\cinder\qtime\QuickTimeGlImplLegacy.h" />
+    <ClInclude Include="..\include\cinder\qtime\QuickTimeImplAvf.h" />
     <ClInclude Include="..\include\cinder\qtime\QuickTimeImplLegacy.h" />
     <ClInclude Include="..\include\cinder\qtime\QuickTimeUtils.h" />
     <ClInclude Include="..\include\cinder\Signals.h" />
@@ -922,6 +935,32 @@
     <ClInclude Include="..\src\r8brain\fft4g.h" />
     <ClInclude Include="..\src\r8brain\r8bbase.h" />
     <ClInclude Include="..\src\r8brain\r8bconf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\cinder\qtime\AvfUtils.mm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\src\cinder\qtime\AvfWriter.mm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\src\cinder\qtime\QuickTimeImplAvf.mm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_ANGLE|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_ANGLE|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

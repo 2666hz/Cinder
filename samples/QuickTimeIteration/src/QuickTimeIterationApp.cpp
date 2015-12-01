@@ -27,7 +27,7 @@ class QTimeIterApp : public App {
 	void loadMovieFile( const fs::path &path );
 
 	qtime::MovieSurfaceRef	mMovie;
-	SurfaceRef				mSurface;
+//	SurfaceRef				mSurface;
 };
 
 
@@ -65,10 +65,11 @@ void QTimeIterApp::keyDown( KeyEvent event )
 			mMovie->stepForward();
 		}
 		else if( event.getChar() == 's' ) {
-			if( mSurface ) {
+			SurfaceRef surface = mMovie->getSurface();
+			if (surface) {
 				fs::path savePath = getSaveFilePath();
 				if( ! savePath.empty() ) {
-					writeImage( savePath, *mSurface );
+					writeImage(savePath, *surface);
 				}
 			}
 		}
@@ -111,8 +112,8 @@ void QTimeIterApp::fileDrop( FileDropEvent event )
 
 void QTimeIterApp::update()
 {
-	if( mMovie )
-		mSurface = mMovie->getSurface();
+//	if( mMovie )
+//		mSurface = mMovie->getSurface();
 }
 
 void QTimeIterApp::draw()
@@ -120,11 +121,13 @@ void QTimeIterApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( true );
 
-	if( ( ! mMovie ) || ( ! mSurface ) )
+	if( ( ! mMovie ) ) // || ( ! mSurface ) )
 		return;
-		
+
+	mMovie->drawCentreFit(getWindowBounds());
+
 	// We are using OpenGL to draw the frames here, so we'll make a texture out of the surface
-	gl::draw( gl::Texture::create( *mSurface ) );
+//	gl::draw( gl::Texture::create( *mSurface ) );
 }
 
 CINDER_APP( QTimeIterApp, RendererGl )
