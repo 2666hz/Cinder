@@ -61,7 +61,7 @@ void CinderWMFVideoApp::setup()
 	};
 
 //	m_video1.loadMovie("D:\\Dev\\Cinder\\blocks\\Cinder-WMFVideo\\samples\\SimplePlayback\\assets\\1.wmv" , "Speakers (High Definition Audio Device)");
-	m_video1.loadMovie("F:\\Projects\\Tour Reservoir\\Video\\V0005.mp4", "Speakers (High Definition Audio Device)");
+	m_video1.loadMovie("T:\\Video\\1920x960@5000k\\V0005.mp4", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://www.ladispersiondufils.net/temp/V0005.mp4", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://212.170.22.153:8080/mjpg/video.mjpg", "Speakers (High Definition Audio Device)");
