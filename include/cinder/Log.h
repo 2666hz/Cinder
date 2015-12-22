@@ -64,11 +64,14 @@ private:
 };
 
 struct Metadata {
-
 	std::string toString() const;
 
 	Level		mLevel;
 	Location	mLocation;
+
+	Metadata() : mLevel(LEVEL_VERBOSE), mLocation() {};
+	Metadata(Level level) : mLevel(level), mLocation() {};
+	Metadata(Level level, const Location& location) : mLevel(level), mLocation(location) {};
 };
 
 extern std::ostream& operator<<( std::ostream &os, const Location &rhs );
@@ -242,10 +245,12 @@ protected:
 	static LogManager 				*sInstance;
 };
 	
-struct Entry {
+struct Entry
+{
 	// TODO: move &&location
-	Entry(Level level = LEVEL_VERBOSE, bool endLine = true);
-	Entry(Level level, const Location &location, bool endLine = true);
+	Entry();
+	Entry(Level level); // , bool endLine = true);
+	Entry(Level level, const Location& location); // , bool endLine = true);
 	~Entry();
 
 	Entry& operator<<(const std::stringstream &rhs)
@@ -266,11 +271,10 @@ struct Entry {
 	void writeToLog();
 	const Metadata&	getMetaData() const	{ return mMetaData; }
 
-private:
-
+protected:
 	Metadata			mMetaData;
 	bool				mHasContent;
-	bool				mEndLine;
+//	bool				mEndLine;
 	std::stringstream	mStream;
 };
 
