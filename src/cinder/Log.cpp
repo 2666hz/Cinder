@@ -171,17 +171,19 @@ void LogManager::write( const Metadata &meta, const std::string &text )
 // MARK: - Entry
 // ----------------------------------------------------------------------------------------------------
 
-Entry::Entry(Level level, bool endLine)
-: mHasContent(false), mEndLine(endLine)
+Entry::Entry()
+	: mHasContent(false)
 {
-	mMetaData.mLevel = level;
 }
 
-Entry::Entry( Level level, const Location &location, bool endLine )
-: mHasContent(false), mEndLine(endLine)
+Entry::Entry(Level level)
+: mHasContent(false), mMetaData(level)
 {
-	mMetaData.mLevel = level;
-	mMetaData.mLocation = location;
+}
+
+Entry::Entry( Level level, const Location &location)
+: mHasContent(false), mMetaData(level, location)
+{
 }
 
 Entry::~Entry()
