@@ -37,7 +37,7 @@ class Url {
 	explicit Url( const std::string &urlString, bool isEscaped = false );
 	
 	//! Returns the string representation of the URL as std::string. Encoded as UTF-8.
-	std::string	str() const { return mStr; }
+	const std::string& str() const { return mStr; }
 	//! Returns the string representation of the URL as char*. Encoded as UTF-8.
 	const char*	c_str() const { return mStr.c_str(); }
 
