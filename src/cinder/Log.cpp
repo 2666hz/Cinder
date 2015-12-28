@@ -26,6 +26,7 @@
 #include "cinder/Utilities.h"
 #include "cinder/Breakpoint.h"
 #include "cinder/app/Platform.h"
+#include "cinder/app/AppBase.h"
 
 #if defined( CINDER_COCOA )
 	#include "cinder/app/cocoa/PlatformCocoa.h"
@@ -203,6 +204,9 @@ void Entry::writeToLog()
 
 void Logger::writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text )
 {
+	if (!app::isMainThread())
+		stream << '+';
+
 	if (isPrintLevelEnabled())
 		stream << meta.mLevel;
 
