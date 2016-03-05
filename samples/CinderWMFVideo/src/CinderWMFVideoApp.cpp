@@ -14,8 +14,10 @@ class CinderWMFVideoApp : public App
 public:
 	void setup() override;
 	void mouseDown(MouseEvent event) override;
+	void keyDown(KeyEvent event) override;
 	void update() override;
 	void draw() override;
+	void cleanup() override;
 	static void prepareSettings(Settings *settings);
 
 private:
@@ -27,21 +29,12 @@ private:
 	bool						m_bIsVideoLoaded = false;
 
 	float						m_fps = 0.0f;
-	bool						mIsFullScreen = false;
 };
 
 void CinderWMFVideoApp::setup()
 {
-	auto getIsFullScreen = [&]() -> bool
-	{
-		return mIsFullScreen;
-	};
-
-	auto setIsFullScreen = [&](bool value) -> void
-	{
-		mIsFullScreen = value;
-		setFullScreen(mIsFullScreen);
-	};
+	auto getIsFullScreen = [&]() -> bool { return isFullScreen(); };
+	auto setIsFullScreen = [&](bool value) -> void { setFullScreen(!isFullScreen()); };
 
 	auto loadVideo = [&]() -> void
 	{
@@ -60,8 +53,8 @@ void CinderWMFVideoApp::setup()
 		}
 	};
 
-//	m_video1.loadMovie("D:\\Dev\\Cinder\\blocks\\Cinder-WMFVideo\\samples\\SimplePlayback\\assets\\1.wmv" , "Speakers (High Definition Audio Device)");
-	m_video1.loadMovie("T:\\Video\\1920x960@5000k\\V0005.mp4", "Speakers (High Definition Audio Device)");
+	m_video1.loadMovie("D:\\Dev\\Cinder\\blocks\\Cinder-WMFVideo\\samples\\SimplePlayback\\assets\\1.wmv" , "Speakers (High Definition Audio Device)");
+//	m_video1.loadMovie("T:\\Video\\mp4\\1920x960@10mbps\\V0005.mp4", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://www.ladispersiondufils.net/temp/V0005.mp4", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8", "Speakers (High Definition Audio Device)");
 //	m_video1.loadMovie("http://212.170.22.153:8080/mjpg/video.mjpg", "Speakers (High Definition Audio Device)");
@@ -70,18 +63,44 @@ void CinderWMFVideoApp::setup()
 
 	m_params = params::InterfaceGl::create("Params", ivec2(210, 210));
 	m_params->addParam<float>("FPS", &m_fps, true);
-	m_params->addParam<bool>("Full Screen", setIsFullScreen, getIsFullScreen).key("F");
+	m_params->addParam<bool>("Full Screen", setIsFullScreen, getIsFullScreen).key("F"); // Buggy - doesnt fill window
 	m_params->addParam<float>("Video duration", &m_videoDuration, true);
 	m_params->addParam<float>("Video position", &m_videoPos, true);
 	m_params->addButton("Load video", loadVideo, "key=V");
-	
-	gl::enableVerticalSync(true);
 
+	getWindow()->getSignalClose().connect([this] { cleanup(); });
+
+	gl::enableVerticalSync(true);
+}
+
+void CinderWMFVideoApp::cleanup()
+{
+	m_video1.close();
 }
 
 void CinderWMFVideoApp::mouseDown(MouseEvent event)
 {
+	quit();
+}
 
+void CinderWMFVideoApp::keyDown(KeyEvent event)
+{
+	const char c = event.getChar();
+
+	switch (c)
+	{
+	case 'f':
+		setFullScreen(!isFullScreen());
+		break;
+	case 'c':
+		m_video1.close();
+		break;
+	case 'q':
+		quit();
+		break;
+	default:
+		break;
+	}
 }
 
 void CinderWMFVideoApp::update()
