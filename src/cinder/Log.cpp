@@ -152,6 +152,24 @@ void LogManager::setPrintLevelEnabled(bool enable)
 	for (auto& logger : mLoggers) logger->setPrintLevelEnabled(enable);
 }
 
+void LogManager::incIndent()
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->incIndent();
+}
+
+void LogManager::decIndent()
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->decIndent();
+}
+
+void LogManager::setIndent(unsigned int i)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setIndent(i);
+}
+
 void LogManager::restoreToDefault()
 {
 	clearLoggers();
@@ -215,6 +233,9 @@ void Logger::writeDefault( std::ostream &stream, const Metadata &meta, const std
 
 	if (isFileLocationEnabled() && meta.mLocation.isValid())
 		stream << meta.mLocation << " ";
+
+	for (unsigned int i = 0; i < mIndent; ++i)
+		stream << '\t';
 
 	stream << text << endl;
 }

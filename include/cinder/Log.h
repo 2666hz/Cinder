@@ -94,16 +94,19 @@ class Logger : private Noncopyable {
 
 	void setPrintLevelEnabled(bool enable = true)	{ mPrintLevelEnabled = enable; }
 	bool isPrintLevelEnabled() const				{ return mPrintLevelEnabled; }
+	void incIndent() { ++mIndent; };
+	void decIndent() { --mIndent; };
+	void setIndent(unsigned int i) { mIndent = i; };
+	unsigned int getIndent() const { return mIndent; };
 
 protected:
-	Logger() : mTimeStampEnabled(false), mFileLocationEnabled(true), mPrintLevelEnabled(true) {};
-
 	void writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text );
 
-  private:
-	bool mTimeStampEnabled;
-	bool mFileLocationEnabled;
-	bool mPrintLevelEnabled;
+private:
+	unsigned int mIndent = 0;
+	bool mTimeStampEnabled = false;
+	bool mFileLocationEnabled = true;
+	bool mPrintLevelEnabled = true;
 };
 	
 typedef std::shared_ptr<Logger>	LoggerRef;
@@ -229,6 +232,12 @@ public:
 	void setFileLocationEnabled(bool enable = true);
 	//! Enable or disable printing of debug level all loggers
 	void setPrintLevelEnabled(bool enable = true);
+	//! increase tab indent on all loggers
+	void incIndent();
+	//! decrease tab indent on all loggers
+	void decIndent();
+	//! set tab indent on all loggers
+	void setIndent(unsigned int i);
 
 	void write( const Metadata &meta, const std::string &text );
 	
@@ -411,3 +420,6 @@ std::vector<std::shared_ptr<LoggerT>> LogManager::getLoggers()
 	CI_LOG_E( str << ", exception type: " << cinder::System::demangleTypeName( typeid( exc ).name() ) << ", what: " << exc.what() );	\
 }
 
+#define CI_LOG_INC				::cinder::log::manager()->incIndent()
+#define CI_LOG_DEC				::cinder::log::manager()->decIndent()
+#define CI_LOG_SETINDENT(_I)	::cinder::log::manager()->setIndent(_I)
