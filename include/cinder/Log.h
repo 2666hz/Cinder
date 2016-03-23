@@ -86,6 +86,15 @@ class Logger : private Noncopyable {
 
 	virtual void write( const Metadata &meta, const std::string &text ) = 0;
 
+	void setElapsedSecondsEnabled(bool enable = true)		{ mElapsedSecondsEnabled = enable; }
+	bool isElapsedSecondsEnabled() const					{ return mElapsedSecondsEnabled; }
+
+	void setElapsedFramesEnabled(bool enable = true)		{ mElapsedFramesEnabled = enable; }
+	bool isElapsedFramesEnabled() const					{ return mElapsedFramesEnabled; }
+
+	void setThreadEnabled(bool enable = true)		{ mThreadEnabled = enable; }
+	bool isThreadEnabled() const					{ return mThreadEnabled; }
+
 	void setTimestampEnabled( bool enable = true )	{ mTimeStampEnabled = enable; }
 	bool isTimestampEnabled() const					{ return mTimeStampEnabled; }
 
@@ -94,6 +103,7 @@ class Logger : private Noncopyable {
 
 	void setPrintLevelEnabled(bool enable = true)	{ mPrintLevelEnabled = enable; }
 	bool isPrintLevelEnabled() const				{ return mPrintLevelEnabled; }
+
 	void incIndent() { ++mIndent; };
 	void decIndent() { --mIndent; };
 	void setIndent(unsigned int i) { mIndent = i; };
@@ -104,9 +114,12 @@ protected:
 
 private:
 	unsigned int mIndent = 0;
+	bool mElapsedSecondsEnabled = false;
+	bool mElapsedFramesEnabled = true;
 	bool mTimeStampEnabled = false;
-	bool mFileLocationEnabled = true;
-	bool mPrintLevelEnabled = true;
+	bool mFileLocationEnabled = false;
+	bool mPrintLevelEnabled = false;
+	bool mThreadEnabled = true;
 };
 	
 typedef std::shared_ptr<Logger>	LoggerRef;
@@ -226,6 +239,13 @@ public:
 	std::vector<LoggerRef> getAllLoggers();
 	//! Returns the mutex used for thread safe logging.
 	std::mutex& getMutex() const			{ return mMutex; }
+
+	//! Enable or disable printing of elapsed seconds since application start
+	void setElapsedSecondsEnabled(bool enable = true);
+	//! Enable or disable printing of current frame count on all loggers
+	void setElapsedFramesEnabled(bool enable = true);
+	//! Enable or disable printing of mainthread / worker thread on all loggers
+	void setThreadEnabled(bool enable = true);
 	//! Enable or disable printing of timestamp on all loggers
 	void setTimestampEnabled(bool enable = true);
 	//! Enable or disable pringing of linenumber, function and filename on all loggers

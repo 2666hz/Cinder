@@ -134,6 +134,24 @@ std::vector<LoggerRef> LogManager::getAllLoggers()
 	return mLoggers;
 }
 
+void LogManager::setElapsedSecondsEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setElapsedSecondsEnabled(enable);
+}
+
+void LogManager::setElapsedFramesEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setElapsedFramesEnabled(enable);
+}
+
+void LogManager::setThreadEnabled(bool enable)
+{
+	lock_guard<mutex> lock(mMutex);
+	for (auto& logger : mLoggers) logger->setThreadEnabled(enable);
+}
+
 void LogManager::setTimestampEnabled(bool enable)
 {
 	lock_guard<mutex> lock(mMutex);
@@ -222,17 +240,23 @@ void Entry::writeToLog()
 
 void Logger::writeDefault( std::ostream &stream, const Metadata &meta, const std::string &text )
 {
-	if (!app::isMainThread())
-		stream << '+';
+	if (isThreadEnabled())
+		stream << (app::isMainThread() ? ' ' : '+');
 
-	if (isPrintLevelEnabled())
-		stream << meta.mLevel;
+	if (isElapsedSecondsEnabled())
+		stream << app::getElapsedSeconds() << ' ';
+	
+	if (isElapsedFramesEnabled())
+		stream << app::getElapsedFrames() << ' ';
 
 	if( isTimestampEnabled() )
-		stream << getCurrentDateTimeString() << " ";
+		stream << getCurrentDateTimeString() << ' ';
+
+	if (isPrintLevelEnabled())
+		stream << meta.mLevel << ' ';
 
 	if (isFileLocationEnabled() && meta.mLocation.isValid())
-		stream << meta.mLocation << " ";
+		stream << meta.mLocation << ' ';
 
 	for (unsigned int i = 0; i < mIndent; ++i)
 		stream << '\t';
