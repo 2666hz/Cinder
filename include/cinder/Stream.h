@@ -120,7 +120,6 @@ class IStreamCinder : public virtual StreamBase {
 	void		readFixedString( char *t, size_t maxSize, bool nullTerminate );
 	void		readFixedString( std::string *t, size_t size );
 	std::string	readLine();
-	size_t		readLine(std::string& s);	// Returns number of characters appended to s. Note, does not append carriage return to string.
 	
 	void			readData( void *dest, size_t size );
 	virtual size_t	readDataAvailable( void *dest, size_t maxSize ) = 0;
