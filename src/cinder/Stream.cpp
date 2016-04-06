@@ -127,11 +127,11 @@ std::string IStreamCinder::readLine()
 	int8_t ch;
 	while( ! isEof() ) {
 		read( &ch );
-		if (ch == 0x0A)				//  LF (Line feed, '\n', 0x0A)
+		if( ch == 0x0A )
 			break;
-		else if (ch == 0x0D) {		//	CR (Carriage return, '\r', 0x0D)
-			read(&ch);
-			if (ch != 0x0A)			//	CR followed by LF (CR+LF, '\r\n', 0x0D0A).
+		else if( ch == 0x0D ) {
+			read( &ch );
+			if( ch != 0x0A )
 				seekRelative( -1 );
 			break;
 		}
